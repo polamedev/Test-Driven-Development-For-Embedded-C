@@ -110,8 +110,8 @@ ifdef GROUP
 	UNITY_TEST_RUNNER_FLAGS += -g $(GROUP)
 endif
 
-ifdef NAME
-	UNITY_TEST_RUNNER_FLAGS += -n $(NAME)
+ifdef TEST_NAME
+	UNITY_TEST_RUNNER_FLAGS += -n $(TEST_NAME)
 endif
 
 ifdef REPEAT
