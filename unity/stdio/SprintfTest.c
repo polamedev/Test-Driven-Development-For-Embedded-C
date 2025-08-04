@@ -56,6 +56,11 @@ static void given(int charsWritten)
     TEST_ASSERT_BYTES_EQUAL(0xaa, output[strlen(expected) + 1]);
 }
 
+TEST(sprintf, InsertInteger)
+{
+    expect("12345");
+    given(sprintf(output, "%i", 12345));
+}
 
 #if 1 
 TEST(sprintf, NoFormatOperations)
