@@ -1,11 +1,11 @@
 /***
  * Excerpted from "Test-Driven Development for Embedded C",
  * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
+ * Copyrights apply to this code. It may not be used to create training material,
  * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
+ * We make no guarantees that this code is fit for any purpose.
  * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
+ ***/
 /*- ------------------------------------------------------------------ -*/
 /*-    Copyright (c) James W. Grenning -- All Rights Reserved          -*/
 /*-    For use by owners of Test-Driven Development for Embedded C,    -*/
@@ -24,29 +24,34 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-
 #include "unity_fixture.h"
-#include <stdio.h>
+
 #include <memory.h>
+#include <stdio.h>
 
 TEST_GROUP(sprintf);
 
-static char output[100];
-static const char * expected;
+static char       *output;
+static const char *expected;
 
 TEST_SETUP(sprintf)
 {
-    memset(output, 0xaa, sizeof output);
+    output   = "";
     expected = "";
 }
 
 TEST_TEAR_DOWN(sprintf)
 {
+    free(output);
 }
 
-static void expect(const char * s)
+static void expect(const char *s)
 {
     expected = s;
+
+    size_t malloc_size = strlen(expected) + 2;
+    output             = malloc(malloc_size);
+    memset(output, 0xaa, malloc_size);
 }
 
 static void given(int charsWritten)
@@ -62,7 +67,7 @@ TEST(sprintf, InsertInteger)
     given(sprintf(output, "%i", 12345));
 }
 
-#if 1 
+#if 1
 TEST(sprintf, NoFormatOperations)
 {
     expect("hey");
@@ -74,7 +79,7 @@ TEST(sprintf, InsertString)
     expect("Hello World\n");
     given(sprintf(output, "Hello %s\n", "World"));
 }
-#endif  
+#endif
 
 /* to run this also change in SprintfTestRunner.c */
 #if 0 
@@ -138,7 +143,6 @@ TEST(sprintf, NoFormatOperations)
     TEST_ASSERT_EQUAL_STRING("hey", output);
 }
 #endif
-
 
 #if 0 
 TEST(sprintf, InsertString)
