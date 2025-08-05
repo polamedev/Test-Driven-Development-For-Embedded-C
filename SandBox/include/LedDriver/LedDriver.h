@@ -27,7 +27,11 @@
 #ifndef D_LedDriver_H
 #define D_LedDriver_H
 
-void LedDriver_Create(void);
+#include <stdint.h>
+
+void LedDriver_Create(uint16_t *led);
 void LedDriver_Destroy(void);
+void LedDriver_TurnOn(int led);
+void LedDriver_TurnOff(int led);
 
 #endif  /* D_LedDriver_H */

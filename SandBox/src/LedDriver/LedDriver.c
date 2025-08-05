@@ -24,16 +24,30 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "LedDriver.h"
+#include <LedDriver.h>
+
 #include <stdlib.h>
 #include <memory.h>
 
-void LedDriver_Create(void)
+static uint16_t *led_driver;
+
+void LedDriver_Create(uint16_t *led)
 {
+    *led = 0;
+    led_driver = led;
+    
 }
 
 void LedDriver_Destroy(void)
 {
 }
 
+void LedDriver_TurnOn(int led)
+{
+    *led_driver = 1;
+}
 
+void LedDriver_TurnOff(int led)
+{
+    *led_driver = 0;
+}

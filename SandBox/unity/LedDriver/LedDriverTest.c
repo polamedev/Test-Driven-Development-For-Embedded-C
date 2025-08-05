@@ -24,10 +24,11 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "unity_fixture.h"
 #include "LedDriver.h"
 
 #include "unity_fixture.h"
+
+#include <stdint.h>
 
 TEST_GROUP(LedDriver);
 
@@ -39,7 +40,31 @@ TEST_TEAR_DOWN(LedDriver)
 {
 }
 
-TEST(LedDriver, StartHere)
+TEST(LedDriver, LedOffAfterCreate)
 {
-/*    TEST_FAIL_MESSAGE("Start here"); */
+    uint16_t virtLed;
+    LedDriver_Create(&virtLed);
+    TEST_ASSERT_EQUAL_HEX16(0, virtLed);
+    // TEST_FAIL_MESSAGE("Start here"); 
+}
+
+TEST(LedDriver, LedOn)
+{
+    uint16_t virtLed;
+    LedDriver_Create(&virtLed);
+
+    LedDriver_TurnOn(1);
+
+    TEST_ASSERT_EQUAL_HEX16(1, virtLed);
+}
+
+TEST(LedDriver, LedOff)
+{
+    uint16_t virtLed;
+    LedDriver_Create(&virtLed);
+
+    LedDriver_TurnOn(1);
+    LedDriver_TurnOff(0);
+
+    TEST_ASSERT_EQUAL_HEX16(0, virtLed);
 }
