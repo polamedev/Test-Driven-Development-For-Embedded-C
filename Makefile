@@ -13,7 +13,10 @@ cleanCodeCppUTest:
 	
 cleanCodeUnity:
 	make -i -f MakefileUnity.mk clean
-	
+
+sandBoxUnity:
+	make -i -C SandBox
+
 everything: 
 	make -i -C t0
 	make -i -C t1

@@ -99,14 +99,19 @@ ifndef UNITY_WARNINGFLAGS
 	UNITY_WARNINGFLAGS = -Wall -Werror -Wshadow -Wswitch-default 
 endif
 
+# Default builddir
+ifndef UNITY_BUILD_DIR
+    UNITY_BUILD_DIR = _build
+endif
+
 # Default dir for temporary files (d, o)
 ifndef UNITY_OBJS_DIR
-    UNITY_OBJS_DIR = objs
+    UNITY_OBJS_DIR = $(UNITY_BUILD_DIR)/objs
 endif
 
 # Default dir for the outout library
 ifndef UNITY_LIB_DIR
-    UNITY_LIB_DIR = lib
+    UNITY_LIB_DIR = $(UNITY_BUILD_DIR)/lib
 endif
 
 # No map by default
@@ -222,7 +227,7 @@ STUFF_TO_CLEAN += \
 #The gcda files for gcov need to be deleted before each run
 #To avoid annoying messages.
 GCOV_CLEAN = $(SILENCE)rm -f $(GCOV_GCDA_FILES) $(GCOV_OUTPUT) $(GCOV_REPORT) $(GCOV_ERROR)
-RUN_TEST_TARGET = $(SILENCE)  $(GCOV_CLEAN) ; echo "Running $(TEST_TARGET)"; ./$(TEST_TARGET) $(UNITY_TEST_RUNNER_FLAGS)
+RUN_TEST_TARGET = $(SILENCE)  $(GCOV_CLEAN) ; echo "Running $(TEST_TARGET)"; ./$(UNITY_BUILD_DIR)/$(TEST_TARGET) $(UNITY_TEST_RUNNER_FLAGS)
 
 INCLUDES_DIRS_EXPANDED = $(call get_dirs_from_dirspec, $(INCLUDE_DIRS))
 INCLUDES += $(foreach dir, $(INCLUDES_DIRS_EXPANDED), -I$(dir))
@@ -268,11 +273,11 @@ flags:
 	
 $(TEST_TARGET): $(TEST_OBJS) $(MOCKS_OBJS)  $(PRODUCTION_CODE_START) $(TARGET_LIB) $(USER_LIBS) $(PRODUCTION_CODE_END) $(STDLIB_CODE_START) 
 	$(SILENCE)echo Linking $@
-	$(SILENCE)$(LINK.o) -o $@ $^ $(LD_LIBRARIES)
+	$(SILENCE)$(LINK.o) -o $(UNITY_BUILD_DIR)/$@ $^ $(LD_LIBRARIES)
 
 $(TARGET_LIB): $(OBJ)
 	$(SILENCE)echo Building archive $@
-	$(SILENCE)mkdir -p lib
+	$(SILENCE)mkdir -p $(UNITY_LIB_DIR)
 	$(SILENCE)$(AR) $(ARFLAGS) $@ $^
 	$(SILENCE)ranlib $@
 
