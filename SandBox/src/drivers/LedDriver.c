@@ -24,47 +24,30 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "LedDriver.h"
+#include <drivers/LedDriver.h>
 
-#include "unity_fixture.h"
+#include <stdlib.h>
+#include <memory.h>
 
-#include <stdint.h>
+static uint16_t *led_driver;
 
-TEST_GROUP(LedDriver);
+void LedDriver_Create(uint16_t *led)
+{
+    *led = 0;
+    led_driver = led;
+    
+}
 
-TEST_SETUP(LedDriver)
+void LedDriver_Destroy(void)
 {
 }
 
-TEST_TEAR_DOWN(LedDriver)
+void LedDriver_TurnOn(int led)
 {
+    *led_driver = 1;
 }
 
-TEST(LedDriver, LedOffAfterCreate)
+void LedDriver_TurnOff(int led)
 {
-    uint16_t virtLed;
-    LedDriver_Create(&virtLed);
-    TEST_ASSERT_EQUAL_HEX16(0, virtLed);
-    // TEST_FAIL_MESSAGE("Start here"); 
-}
-
-TEST(LedDriver, LedOn)
-{
-    uint16_t virtLed;
-    LedDriver_Create(&virtLed);
-
-    LedDriver_TurnOn(1);
-
-    TEST_ASSERT_EQUAL_HEX16(1, virtLed);
-}
-
-TEST(LedDriver, LedOff)
-{
-    uint16_t virtLed;
-    LedDriver_Create(&virtLed);
-
-    LedDriver_TurnOn(1);
-    LedDriver_TurnOff(0);
-
-    TEST_ASSERT_EQUAL_HEX16(0, virtLed);
+    *led_driver = 0;
 }
