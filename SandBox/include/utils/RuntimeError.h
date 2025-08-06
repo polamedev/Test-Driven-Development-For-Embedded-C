@@ -24,15 +24,14 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "unity_fixture.h"
 
-static void RunAllTests(void)
-{
-    RUN_TEST_GROUP(LedDriver);
-    // RUN_TEST_GROUP(CircularBuffer);
-}
+#ifndef D_RuntimeError_H
+#define D_RuntimeError_H
 
-int main(int ac, char* av[])
-{
-    return UnityMain(ac, av, RunAllTests);
-}
+void RuntimeError(const char * message, int parameter,
+		  const char * file, int line);
+
+#define RUNTIME_ERROR(description, parameter)\
+    RuntimeError(description, parameter, __FILE__, __LINE__)
+
+#endif

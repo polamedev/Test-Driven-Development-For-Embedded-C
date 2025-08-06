@@ -1,4 +1,4 @@
-#include <ADT/CircularBuffer.h>
+#include <utils/CircularBuffer.h>
 
 
 CircularBuffer CircularBuffer_Create(size_t size)

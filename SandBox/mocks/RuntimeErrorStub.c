@@ -24,15 +24,34 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "unity_fixture.h"
+#include "RuntimeErrorStub.h"
 
-static void RunAllTests(void)
+static const char * message = "No Error";
+static int parameter = -1;
+static const char * file = 0;
+static int line = -1;
+
+void RuntimeErrorStub_Reset(void)
 {
-    RUN_TEST_GROUP(LedDriver);
-    // RUN_TEST_GROUP(CircularBuffer);
+    message = "No Error";
+    parameter = -1;
 }
 
-int main(int ac, char* av[])
+const char * RuntimeErrorStub_GetLastError(void)
 {
-    return UnityMain(ac, av, RunAllTests);
+    return message;
 }
+
+void RuntimeError(const char * m, int p, const char * f, int l)
+{
+    message = m;
+    parameter = p;
+    file = f;
+    line = l;
+}
+
+int RuntimeErrorStub_GetLastParameter(void)
+{
+    return parameter;
+}
+
