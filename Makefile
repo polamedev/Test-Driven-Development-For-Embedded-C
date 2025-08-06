@@ -6,13 +6,7 @@ all: everything
 clean: cleaneverything
 
 codeUnity:
-	make -i -f MakefileUnity.mk
-
-cleanCodeCppUTest:
-	make -i -f MakefileCppUTest.mk clean
-	
-cleanCodeUnity:
-	make -i -f MakefileUnity.mk clean
+	make -i -C code
 
 sandBoxUnity:
 	make -i -C SandBox
