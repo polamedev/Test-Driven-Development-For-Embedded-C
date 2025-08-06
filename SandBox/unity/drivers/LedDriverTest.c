@@ -30,6 +30,14 @@
 #include <unity_fixture.h>
 #include <RuntimeErrorStub.h>
 
+#include <stdbool.h>
+
+static uint16_t expect_led_values(uint16_t leds)  
+{
+    const bool is_inverted = true;
+    return is_inverted ? ~leds : leds;
+}
+
 TEST_GROUP(LedDriver);
 static uint16_t virtualLeds;
 TEST_SETUP(LedDriver)
@@ -45,66 +53,66 @@ TEST(LedDriver, LedsOffAfterCreate)
 {
     uint16_t virtualLedsPrivate = 0x0000;
     LedDriver_Create(&virtualLedsPrivate);
-    TEST_ASSERT_EQUAL_HEX16(0xffff, virtualLedsPrivate);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0), virtualLedsPrivate);
 }
-IGNORE_TEST(LedDriver, TurnOnLedOne)
+TEST(LedDriver, TurnOnLedOne)
 {
     LedDriver_TurnOn(1);
-    TEST_ASSERT_EQUAL_HEX16(1, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0x1), virtualLeds);
 }
-IGNORE_TEST(LedDriver, TurnOffLedOne)
+TEST(LedDriver, TurnOffLedOne)
 {
     LedDriver_TurnOn(1);
     LedDriver_TurnOff(1);
-    TEST_ASSERT_EQUAL_HEX16(0, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0x0), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, TurnOnMultipleLeds)
+TEST(LedDriver, TurnOnMultipleLeds)
 {
     LedDriver_TurnOn(9);
     LedDriver_TurnOn(8);
-    TEST_ASSERT_EQUAL_HEX16(0x180, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0x180), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, TurnOffMultipleLeds)
+TEST(LedDriver, TurnOffMultipleLeds)
 {
     LedDriver_TurnAllOn();
     LedDriver_TurnOff(9);
     LedDriver_TurnOff(8);
-    TEST_ASSERT_EQUAL_HEX16((~0x180)&0xffff, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values((~0x180)&0xffff), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, TurnOffAnyLed)
+TEST(LedDriver, TurnOffAnyLed)
 {
     LedDriver_TurnAllOn();
     LedDriver_TurnOff(8);
-    TEST_ASSERT_EQUAL_HEX16(0xff7f, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0xff7f), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, LedMemoryIsNotReadable)
+TEST(LedDriver, LedMemoryIsNotReadable)
 {
     virtualLeds = 0xffff;
     LedDriver_TurnOn(8);
-    TEST_ASSERT_EQUAL_HEX16(0x80, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0x80), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, UpperAndLowerBounds)
+TEST(LedDriver, UpperAndLowerBounds)
 {
     LedDriver_TurnOn(1);
     LedDriver_TurnOn(16);
-    TEST_ASSERT_EQUAL_HEX16(0x8001, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0x8001), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, OutOfBoundsTurnOnDoesNoHarm)
+TEST(LedDriver, OutOfBoundsTurnOnDoesNoHarm)
 {
     LedDriver_TurnOn(-1);
     LedDriver_TurnOn(0);
     LedDriver_TurnOn(17);
     LedDriver_TurnOn(3141);
-    TEST_ASSERT_EQUAL_HEX16(0, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
+TEST(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
 {
     LedDriver_TurnAllOn();
 
@@ -112,7 +120,7 @@ IGNORE_TEST(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
     LedDriver_TurnOff(0);
     LedDriver_TurnOff(17);
     LedDriver_TurnOff(3141);
-    TEST_ASSERT_EQUAL_HEX16(0xffff, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0xffff), virtualLeds);
 }
 
 IGNORE_TEST(LedDriver, OutOfBoundsToDo)
@@ -120,7 +128,7 @@ IGNORE_TEST(LedDriver, OutOfBoundsToDo)
     /* TODO: what should we do during runtime? */
 }
 
-IGNORE_TEST(LedDriver, OutOfBoundsProducesRuntimeError)
+TEST(LedDriver, OutOfBoundsProducesRuntimeError)
 {
     LedDriver_TurnOn(-1);
     TEST_ASSERT_EQUAL_STRING("LED Driver: out-of-bounds LED",
@@ -128,21 +136,21 @@ IGNORE_TEST(LedDriver, OutOfBoundsProducesRuntimeError)
     TEST_ASSERT_EQUAL(-1, RuntimeErrorStub_GetLastParameter());
 }
 
-IGNORE_TEST(LedDriver, IsOn)
+TEST(LedDriver, IsOn)
 {
     TEST_ASSERT_FALSE(LedDriver_IsOn(11));
     LedDriver_TurnOn(11);
     TEST_ASSERT_TRUE(LedDriver_IsOn(11));
 }
 
-IGNORE_TEST(LedDriver, IsOff)
+TEST(LedDriver, IsOff)
 {
     TEST_ASSERT_TRUE(LedDriver_IsOff(12));
     LedDriver_TurnOn(12);
     TEST_ASSERT_FALSE(LedDriver_IsOff(12));
 }
 
-IGNORE_TEST(LedDriver, OutOfBoundsLedsAreAlwaysOff)
+TEST(LedDriver, OutOfBoundsLedsAreAlwaysOff)
 {
     TEST_ASSERT_TRUE(LedDriver_IsOff(0));
     TEST_ASSERT_TRUE(LedDriver_IsOff(17));
@@ -150,17 +158,17 @@ IGNORE_TEST(LedDriver, OutOfBoundsLedsAreAlwaysOff)
     TEST_ASSERT_FALSE(LedDriver_IsOn(17));
 }
 
-IGNORE_TEST(LedDriver, AllOn)
+TEST(LedDriver, AllOn)
 {
     LedDriver_TurnAllOn();
-    TEST_ASSERT_EQUAL_HEX16(0xffff, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0xffff), virtualLeds);
 }
 
-IGNORE_TEST(LedDriver, AllOff)
+TEST(LedDriver, AllOff)
 {
     LedDriver_TurnAllOn();
     LedDriver_TurnAllOff();
-    TEST_ASSERT_EQUAL_HEX16(0, virtualLeds);
+    TEST_ASSERT_EQUAL_HEX16(expect_led_values(0), virtualLeds);
 }
 
 /*
